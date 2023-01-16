@@ -26,7 +26,7 @@ fi
 pushd "$ROOT"
 
 # Make sure the repo is in a good shape
-echo " + Clone/update iree repo"
+echo " + Clone/update tpp-mlir repo"
 mkdir -p repos
 pushd repos
 LLVM_ROOT=$PWD/llvm-project/build
