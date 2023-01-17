@@ -33,9 +33,9 @@ LLVM_ROOT=$PWD/llvm-project/build
 if [ ! -d tpp-mlir ]; then
   git clone $TPPMLIR_REPO
 fi
+pushd tpp-mlir
 git checkout $TPPMLIR_BRANCH
 git pull
-pushd tpp-mlir
 
 # Create the build structure
 TPPMLIR_ROOT=$PWD
@@ -45,6 +45,7 @@ mkdir -p "$BLD_DIR"
 # Build tpp-mlir with LLVM in-tree
 echo " + Build tpp-mlir in-tree"
 cmake -GNinja -B $BLD_DIR -S $TPPMLIR_ROOT \
+    -Wno-dev \
     -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
     -DCMAKE_C_COMPILER_LAUNCHER=ccache \
     -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
