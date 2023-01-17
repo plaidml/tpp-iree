@@ -27,14 +27,16 @@ fi
 pushd "$ROOT"
 
 # Make sure the repo is in a good shape
+# IREE is huge, so we only clone when needed, and update when there already
 echo " + Clone/update iree repo"
 mkdir -p repos
 pushd repos
-if [ -d iree ]; then
-  rm -rf iree
+if [ ! -d iree ]; then
+  git clone $IREE_REPO
 fi
-git clone --depth 1 -b $IREE_BRANCH --shallow-submodules $IREE_REPO
 pushd iree
+git checkout $IREE_BRANCH
+git pull
 git submodule update --init --recursive --depth=1
 
 # Create the build structure

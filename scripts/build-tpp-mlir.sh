@@ -30,10 +30,11 @@ echo " + Clone/update tpp-mlir repo"
 mkdir -p repos
 pushd repos
 LLVM_ROOT=$PWD/llvm-project/build
-if [ -d tpp-mlir ]; then
-  rm -rf tpp-mlir
+if [ ! -d tpp-mlir ]; then
+  git clone $TPPMLIR_REPO
 fi
-git clone --depth 1 -b $TPPMLIR_BRANCH --shallow-submodules $TPPMLIR_REPO
+git checkout $TPPMLIR_BRANCH
+git pull
 pushd tpp-mlir
 
 # Create the build structure
