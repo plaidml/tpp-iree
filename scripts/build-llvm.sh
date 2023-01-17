@@ -6,7 +6,7 @@
 set -eu
 
 LLVM_REPO=https://github.com/plaidml/llvm.git
-LLVM_BRANCH=iree
+LLVM_BRANCH=tpp-mlir
 
 BUILD_TYPE=Release
 if [ $# -ge 1 ] && [ "$1" == "-d" ]; then
