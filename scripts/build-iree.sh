@@ -71,8 +71,9 @@ cmake -GNinja -B $BLD_DIR -S $IREE_ROOT \
     -DIREE_ENABLE_ASSERTIONS=ON \
     -DIREE_BUILD_PYTHON_BINDINGS=ON \
     -DIREE_ENABLE_LLD=ON \
-    -DPython3_EXECUTABLE=$(which python)
-ninja -C "$BLD_DIR"
+    -DPython3_EXECUTABLE=$(which python) \
+    -DCMAKE_INSTALL_PREFIX=$ROOT/install/iree
+ninja -C "$BLD_DIR" install
 
 # Python bindings test
 echo " + Checking IREE Python bindings"

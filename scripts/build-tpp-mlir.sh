@@ -50,5 +50,7 @@ cmake -GNinja -B $BLD_DIR -S $TPPMLIR_ROOT \
     -DCMAKE_C_COMPILER=clang \
     -DCMAKE_CXX_COMPILER=clang++ \
     -DMLIR_DIR=$LLVM_ROOT/lib/cmake/mlir \
-    -DLLVM_EXTERNAL_LIT=$LLVM_ROOT/bin/llvm-lit
-ninja -C "$BLD_DIR"
+    -DLLVM_EXTERNAL_LIT=$LLVM_ROOT/bin/llvm-lit \
+    -DCMAKE_INSTALL_PREFIX=$ROOT/install/tpp-mlir
+ninja -C "$BLD_DIR" check-all
+ninja -C "$BLD_DIR" install

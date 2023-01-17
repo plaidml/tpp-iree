@@ -5,8 +5,7 @@
 
 set -eu
 
-LLVM_REPO=https://github.com/plaidml/llvm.git
-LLVM_BRANCH=tpp-mlir
+LLVM_REPO=https://github.com/llvm/llvm-project.git
 
 BUILD_TYPE=Release
 if [ $# -ge 1 ] && [ "$1" == "-d" ]; then
@@ -26,14 +25,21 @@ fi
 pushd "$ROOT"
 
 # Make sure the repo is in a good shape
+# LLVM is huge, so we only clone when needed, and update when there already
 echo " + Clone/update llvm repo"
 mkdir -p repos
 pushd repos
-if [ -d llvm-project ]; then
-  rm -rf llvm-project
+if [ ! -d llvm-project ]; then
+  git clone $LLVM_REPO
 fi
-git clone --depth 1 -b $LLVM_BRANCH --shallow-submodules $LLVM_REPO
 pushd llvm-project
+
+# Create a branch for the llvm_version in tpp-mlir
+LLVM_VERSION_FILE=$ROOT/repos/tpp-mlir/build_tools/llvm_version.txt
+if [ -f $LLVM_VERSION_FILE ]; then
+  LLVM_VERSION=$(cat $LLVM_VERSION_FILE)
+  git reset --hard $LLVM_VERSION
+fi
 
 # Create the build structure
 LLVM_ROOT=$PWD
@@ -42,7 +48,7 @@ mkdir -p "$BLD_DIR"
 
 # Build llvm-project with LLVM in-tree
 echo " + Build llvm-project in-tree"
-cmake -GNinja -B $BLD_DIR -S $LLVM_ROOT \
+cmake -GNinja -B $BLD_DIR -S $LLVM_ROOT/llvm \
     -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
     -DCMAKE_C_COMPILER_LAUNCHER=ccache \
     -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
@@ -52,5 +58,7 @@ cmake -GNinja -B $BLD_DIR -S $LLVM_ROOT \
     -DLLVM_INSTALL_UTILS=ON \
     -DLLVM_TARGETS_TO_BUILD="X86;NVPTX;AMDGPU" \
     -DLLVM_ENABLE_ASSERTIONS=ON \
-    -DLLVM_USE_LINKER=lld
+    -DLLVM_USE_LINKER=lld \
+    -DCMAKE_INSTALL_PREFIX=$ROOT/install/llvm
 ninja -C "$BLD_DIR" check-mlir
+ninja -C "$BLD_DIR" install
